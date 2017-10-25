@@ -1,8 +1,16 @@
 Rails.application.routes.draw do
+  get 'games/:id', to: 'games#show'
+  post 'games', to: 'games#create'
+  post 'games/join', to: 'games#join'
+  get 'games/join', to: 'games#search_join'
+  get 'games/:id/ready', to: 'games#ready'
+  delete 'games/:id', to: 'games#destroy'
   get '/' => 'sessions#new'
+  root 'sessions#new'
   match 'auth/:provider/callback', to: 'sessions#create', via: [:get, :post]
   match 'auth/failure', to: redirect('/'), via: [:get, :post]
   match 'signout', to: 'sessions#destroy', as: 'signout', via: [:get, :post]
+  get 'home', to:'users#show'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

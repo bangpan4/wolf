@@ -11,7 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024192340) do
+ActiveRecord::Schema.define(version: 20171024221949) do
+
+  create_table "games", force: :cascade do |t|
+    t.integer  "player_num"
+    t.integer  "room_num"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "joins", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "game_id"
+    t.integer  "role"
+    t.boolean  "win"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "joins", ["game_id"], name: "index_joins_on_game_id"
+  add_index "joins", ["user_id"], name: "index_joins_on_user_id"
 
   create_table "users", force: :cascade do |t|
     t.string   "provider"

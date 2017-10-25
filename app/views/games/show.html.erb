@@ -1,0 +1,31 @@
+<h1>Games#show</h1>
+<p>Find me in app/views/games/show.html.erb</p>
+<a href="/game/<%=@game.id%>/ready">Ready</a>
+<a href="/game/<%=@game.id%>/quit" data-method="delete">Quit</a>
+<p>########################################</p>
+<% @users.each do |user| %>
+<p><%=user.name%></p>
+<%end%>
+<button id="ready">Ready</button>
+
+<script type="text/javascript">
+  var dispatcher = new WebSocketRails('localhost:3000/websocket');
+
+  dispatcher.on_open = function(data) {  
+    console.log('Connection has been established: ', data);
+    // dispatcher.trigger('hello', 'Hello, there!');
+  }
+  $(document).on("click","#ready",function(){
+  	console.log("Click!")
+  	dispatcher.trigger('ready','Im ready')
+  })
+  var channel = dispatcher.subscribe('updates'); 
+  channel.bind('start',function(string){
+  	console.log("let's Start!")
+  	$('#count').text(string)
+  });
+  // channel.bind('update', function(count) {  
+  //   console.log("this is count: "+count)
+  //   $('#count').text(count);
+  // });
+</script>

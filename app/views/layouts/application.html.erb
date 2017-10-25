@@ -5,6 +5,7 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+
 </head>
 <body>
 
@@ -16,7 +17,17 @@
     <%= link_to "Sign in with Facebook", "/auth/facebook", id: "sign_in" %>
   <% end %>
 </div>
+<p>This is player numbers:</p>
+<p id="count"></p>
 <%= yield %>
 
+<!-- <script type="text/javascript">
+  $('body').prepend('<div id="fb-root"></div>');
+  $.ajax({
+    url: window.location.protocol + "//connect.facebook.net/en_US/all.js",
+    dataType: 'script',
+    cache: true
+  });
+</script> -->
 </body>
 </html>

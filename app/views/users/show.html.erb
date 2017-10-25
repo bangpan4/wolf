@@ -1,0 +1,21 @@
+<div>
+	<h2>Create a Game</h2>
+	<form action="/games" method="post">
+		<input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+		<label>Player Number:</label>
+		<input type="number" name="player_num" min="1" max="12">
+		<input type="submit" value="Create Game">
+	</form>
+</div>
+	
+<div>
+	<h2>Join a Game</h2>
+	<form action="/games/join" method="post">
+		<input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+		<label>Room Number</label>
+		<input type="number" name="room_num">
+		<input type="submit" value="Join">
+	</form>
+	<a href="/games/join">Quick Join</a>
+</div>
+
