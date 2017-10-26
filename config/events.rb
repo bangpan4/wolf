@@ -14,5 +14,8 @@ WebsocketRails::EventMap.describe do
   subscribe :hello, 'counter#hello' 
   subscribe :client_disconnected, 'counter#goodbye'  
   subscribe :connection_closed, 'counter#goodbye'
-  subscribe :ready, 'counter#ready'  
+  subscribe :ready, 'counter#ready'
+  # subscribe :my_role, 'counter#give_role'  
+  subscribe :pick_players, 'counter#pick_players' 
+  subscribe :vote, 'counter#vote' 
 end

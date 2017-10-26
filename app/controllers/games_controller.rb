@@ -59,6 +59,13 @@ class GamesController < ApplicationController
 	end
   end
 
+  def role
+  	game = Game.find_by_id(params[:id])
+  	join = game.joins.find_by(user_id:session[:user_id])
+	@res = join.role
+  	render json:@res
+  end
+
   def destroy
   	join = current_user.games.find_by_id(params[:id])
   	if join

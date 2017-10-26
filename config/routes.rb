@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'games/join', to: 'games#search_join'
   get 'games/:id/ready', to: 'games#ready'
   delete 'games/:id', to: 'games#destroy'
+  get 'games/:id/role', to: 'games#role'
   get '/' => 'sessions#new'
   root 'sessions#new'
   match 'auth/:provider/callback', to: 'sessions#create', via: [:get, :post]

@@ -1,17 +1,23 @@
 <h1>Games#show</h1>
 <p>Find me in app/views/games/show.html.erb</p>
-<a href="/game/<%=@game.id%>/ready">Ready</a>
 <a href="/game/<%=@game.id%>/quit" data-method="delete">Quit</a>
 <p>########################################</p>
+<div id="display">
+	
+</div>
+<p>########################################</p>
+
+
 <% @users.each do |user| %>
-<p><%=user.name%></p>
+<p id="<%=user.id%>"><%=user.name%></p>
 <%end%>
 <button id="ready">Ready</button>
 
 <script type="text/javascript">
   var dispatcher = new WebSocketRails('localhost:3000/websocket');
+  var limit = 2
 
-  dispatcher.on_open = function(data) {  
+  dispatcher.on_open = function(data) {
     console.log('Connection has been established: ', data);
     // dispatcher.trigger('hello', 'Hello, there!');
   }
@@ -20,12 +26,92 @@
   	dispatcher.trigger('ready','Im ready')
   })
   var channel = dispatcher.subscribe('updates'); 
-  channel.bind('start',function(string){
+  channel.bind('start',function(user){
   	console.log("let's Start!")
-  	$('#count').text(string)
+  	if(user.id == <%=session[:user_id]%>){
+  		$('#display').text("You are the first hoster")
+  		generateForm(<%=@game.player_num%>)
+  	}
+  	else{
+	  	$('#display').text( user.name+" is the first hoster")
+  	}
+  	$.ajax({url:"/games/<%=@game.id%>/role",
+  			success:function(res){
+  				console.log(res);
+  				if(res.role == 0){
+  					console.log(res.partner);
+  				}
+  			}
+  	});
   });
-  // channel.bind('update', function(count) {  
-  //   console.log("this is count: "+count)
-  //   $('#count').text(count);
-  // });
+  
+  channel.bind('players',function(users){
+  	// console.log(users);
+  	var result = users.join(", ")
+  	result += " have been picked to take the task"
+  	$('#display').append("<p>"+result+"</p>")
+  	voteForm()
+  });
+
+  channel.bind('vote_result',function(res){
+
+  });
+
+  function generateForm(m){
+  	var form = "<form id='pick'>"
+  	for(var i=1;i<m+1;i++){
+  		form += "<input class='box' type='checkbox' name='"+i+"' value="+i+"><br>";
+  	}
+  	form += "<button id='confirm' disabled>Pick Players</button></form>"
+  	$("#display").append(form)
+  }
+
+  function voteForm(){
+  	var vote = "<div id='vote'><h2>Do you agree with this?</h2><p id='time'>10s</p>"
+  	vote += "<button id = 'agree'>Agree</button>"
+  	vote += "<button id = 'disagree'>Disagree</button></div>"
+  	$("#display").append(vote)
+  	var t = 10
+  	var timer = setInterval(function(){
+  		t--;
+  		if($("#vote")){
+	  		$("#time").text(t+"s");
+  		}
+  	},1000)
+  	setTimeout(function(){
+  		clearInterval(timer)
+  		if($("#vote")){
+	  		$("#vote").remove();
+  		}
+  	},10500)};
+
+  $("#display").on("change","input.box",function(e){
+  	if($(this).siblings(':checked').length >= limit){
+  		this.checked = false;
+  		$('#confirm').prop('disabled', false);
+  	}
+  	else{
+  		$('#confirm').prop('disabled', true);
+  		if($(this).siblings(':checked').length == limit-1){
+  			$('#confirm').prop('disabled', false);
+  		}
+  	}
+  });
+  $("#display").on("click","#confirm",function(e){
+  	e.preventDefault();
+  	var data = $(this).parent().serializeArray();
+  	// console.log(typeof(data));
+  	$(this).parent().remove();
+  	dispatcher.trigger('pick_players',data)
+  })
+
+  $("#display").on("click","#agree",function(e){
+  	dispatcher.trigger('vote',true);
+  	$("#vote").remove();
+  })
+
+  $("#display").on("click","#disagree",function(e){
+  	dispatcher.trigger('vote',false);
+  	$("#vote").remove();
+  })
 </script>
